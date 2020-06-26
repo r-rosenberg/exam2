@@ -2,7 +2,7 @@
 title: "exam2"
 author: "Rachel Rosenberg"
 date: "6/26/2020"
-output: word_document
+output: word_document 
 ---
 
 ```{r setup, include=FALSE}
