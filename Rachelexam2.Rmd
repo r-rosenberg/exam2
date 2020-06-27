@@ -2,29 +2,117 @@
 title: "exam2"
 author: "Rachel Rosenberg"
 date: "6/26/2020"
-output: word_document 
+output: pdf_document 
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Set working directory
+```{r}
+setwd("/Users/racheleryn/Documents/Git/Exam2")
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+**Question 1**: Clear environment
+```{r}
+rm(list = ls())
+```
+**Question 2**: Load inequality data set
+```{r}
+library(rio)
+inquality_data = import("inequality.xlsx", which = 1) # first tab
+```
+**Question 3**:
+This data is not cross-sectional, it only shows countries in the year 2015. 
+```{r}
+library(dplyr)
+glimpse(inquality_data)
 ```
 
-## Including Plots
+**Question 4**: Subset the data (come back)
+```{r}
+subset(inquality_data, country == "Denmark")
+subset(inquality_data, country == "Sweden")
+```
+**Question 5**: Subset the inequality_gni for Brazil (come back)
+```{r}
+subset(inquality_data, country == "Brazil")
+```
+**Question 6**:
 
-You can also embed plots, for example:
+Based on the previous results, it's better for `inequality_gni` to have a lower score. See the data below. (Return)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+**Question 7**: View the head of the data frame
+```{r}
+head(inquality_data)
+```
+**Question 8**: write a function
+```{r}
+accent.remove = function(s) {
+  old1 <- "ú"
+  new1 <- "u"
+  s1 <- chartr(old1, new1, s)
+  for(i in seq_along(old1)) s1 <- gsub(old1[i], new1[i], s1, fixed = TRUE)
+  s1
+}
+
+```
+A view of the data with the accents removed (come back)
+```{r}
+head(inquality_data)
+```
+**Question 9**: Sort countries by lowest GNI values (come back)
+```{r}
+inquality_data = inquality_data[order(inquality_data$inequality_gini),]
+```
+A view of the newly sorted data
+```{r}
+head(inquality_data)
+```
+**Question 9**: Mean inequality_gni score (come back)
+```{r}
+mean(inquality_data$inequality_gini, na.rm = TRUE)
+```
+The mean of the score is `mean(inquality_data$inequality_gini, na.rm = TRUE)` (come back)
+
+**Question 10**: create dummy variables (come back and use ifelse)
+```{r}
+inquality_data$high_inequality = NA
+inquality_data$high_inequality[inquality_data$inequality_gini>36.81375] = 1
+inquality_data$high_inequality[inquality_data$inequality_gini<36.81375] = 0
+
+inquality_data$low_inequality = NA
+inquality_data$low_inequality[inquality_data$inequality_gini<36.81375] = 1
+inquality_data$low_inequality[inquality_data$inequality_gini>36.81375] = 0
+
+```
+**Question 11**: Run a cross tabulation
+```{r}
+library(doBy)
+summaryBy(high_inequality ~ low_inequality, data = inquality_data, FUN=c(mean))
+```
+**Question 13** a for loop
+```{r}
+orgs <- c('World Bank', 'African Development Bank', 'Bill and Melinda Gates Foundation') 
+for ( i in orgs){
+print(i) }
+```
+**Question 15**: Variable 
+I picked Central government debt, total (% of GDP). Highly indebted countries normally suffer from income inequality.
+
+Question 16: Import variable from WB
+```{r}
+library(WDI)
+debt_data = WDI(country = "all",
+                indicator =c("GC.DOD.TOTL.GD.ZS"),
+                start = 2015, end = 2015, extra = FALSE, cache = NULL)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Question?: Rename variable
+```{r}
+ library(data.table) 
+setnames(debt_data,"GC.DOD.TOTL.GD.ZS", "Government % of Debt")
+```
+Question?: Merge data
+
+
+
+
+
+
